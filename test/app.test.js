@@ -28,5 +28,13 @@ describe('Projects Database', () => {
             });
     });
 
+    it('gets a projects when requested', () => {
+        return chai.request(app)
+            .get('/projects')
+            .then(({ body }) => {
+                assert.deepEqual(body, [project]);
+            })
+    });
+
     after(() => mongo.client.close());
 });
