@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env.test' });
+// require('dotenv').config({ path: '../.env.test' });
 const mongo = require('../lib/mongodb');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -24,7 +24,9 @@ describe('Projects Database', () => {
             .post('/projects')
             .send(project)
             .then(({ body }) => {
-                assert.deepEqual(body, [project]);
+                assert.deepEqual(body.name, project.name);
             });
     });
+
+    after(() => mongo.client.close());
 });
