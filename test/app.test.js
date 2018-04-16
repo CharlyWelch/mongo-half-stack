@@ -74,7 +74,14 @@ describe('Projects Database', () => {
     });
     it('deletes a project by id', () => {
         return chai.request(app)
-
+            .delete(`/projects/${project._id}`)
+            .then(() => {
+                return chai.request(app)
+                    .get('/projects')
+                    .then(({ body }) => {
+                        assert.deepEqual(body, [project2]);
+                    });
+            });
     });
 
 
