@@ -1,4 +1,3 @@
-// require('dotenv').config({ path: '../.env.test' });
 const mongo = require('../lib/mongodb');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -19,7 +18,12 @@ describe('Projects Database', () => {
         budget: 5000
     };
 
-    it('saves a project to database', () => {
+    let project2 = {
+        name: 'felted bunny',
+        materials: ['needles', 'wool', 'felting block'],
+    };
+
+    it('saves a project to database with post', () => {
         return chai.request(app)
             .post('/projects')
             .send(project)
