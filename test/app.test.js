@@ -23,12 +23,22 @@ describe('Projects Database', () => {
         materials: ['needles', 'wool', 'felting block'],
     };
 
-    it('saves a project to database with post', () => {
+    before(() => {
+        return chai.request(app)
+            .post('/projects')
+            .send(project)
+            .then(({ body }) => {
+                project = body;
+            });
+    });
+
+    it('saves a project to database with post and adds _id', () => {
         return chai.request(app)
             .post('/projects')
             .send(project)
             .then(({ body }) => {
                 assert.deepEqual(body.name, project.name);
+                assert.ok(body._id);
             });
     });
 
@@ -38,6 +48,14 @@ describe('Projects Database', () => {
             .then(({ body }) => {
                 assert.deepEqual(body[0].name, project.name);
                 assert.deepEqual(body[0].budget, project.budget);
+            });
+    });
+
+    it('gets a project by id', () => {
+        return chai.request(app)
+            .get(`/projects/${project._id}`)
+            .then(({ body }) => {
+                assert.deepEqual(body, project);
             });
     });
 
