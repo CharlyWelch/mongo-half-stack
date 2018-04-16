@@ -20,7 +20,8 @@ describe('Projects Database', () => {
 
     let project2 = {
         name: 'felted bunny',
-        materials: ['needles', 'wool', 'felting block'],
+        timeline: '1 week',
+        budget: 20
     };
 
     before(() => {
@@ -62,11 +63,11 @@ describe('Projects Database', () => {
     it('updates a project', () => {
         project.budget = 4500;
         return chai.request(app)
-            .put(`/projects/project${project._id}`)
+            .put(`/projects/${project._id}`)
             .send(project)
             .then(() => {
                 return chai.request(app)
-                    .get(`/projects/project${project._id}`)
+                    .get(`/projects/${project._id}`)
                     .then(({ body }) => {
                         assert.deepEqual(body, project);
                     });
