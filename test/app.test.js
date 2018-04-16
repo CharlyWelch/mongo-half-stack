@@ -33,25 +33,10 @@ describe('Projects Database', () => {
             });
     });
 
-    it('saves a project to database with post and adds _id', () => {
-        return chai.request(app)
-            .post('/projects')
-            .send(project)
-            .then(({ body }) => {
-                assert.deepEqual(body.name, project.name);
-                assert.ok(body._id);
-            });
+    it('saves a project to database with post, adds _id', () => {
+        assert.ok(project._id);
     });
-
-    it('gets projects when requested', () => {
-        return chai.request(app)
-            .get('/projects')
-            .then(({ body }) => {
-                assert.deepEqual(body[0].name, project.name);
-                assert.deepEqual(body[0].budget, project.budget);
-            });
-    });
-
+    
     it('gets a project by id', () => {
         return chai.request(app)
             .get(`/projects/${project._id}`)
@@ -59,7 +44,21 @@ describe('Projects Database', () => {
                 assert.deepEqual(body, project);
             });
     });
-
+    
+    it('gets all projects', () => {
+        return chai.request(app)
+            .post('/projects')
+            .send(project2)
+            .then(({ body }) => {
+                project2 = body;
+                return chai.request(app)
+                    .get('/projects')
+                    .then(({ body }) => {
+                        assert.deepEqual(body, [project, project2]);
+                    });
+            });
+    });
+    
     it('updates a project', () => {
         project.budget = 4500;
         return chai.request(app)
@@ -73,6 +72,11 @@ describe('Projects Database', () => {
                     });
             });
     });
+    it('deletes a project by id', () => {
+        return chai.request(app)
+
+    });
+
 
     after(() => mongo.client.close());
 });
