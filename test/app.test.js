@@ -72,6 +72,7 @@ describe('Projects Database', () => {
                     });
             });
     });
+    
     it('deletes a project by id', () => {
         return chai.request(app)
             .delete(`/projects/${project._id}`)
