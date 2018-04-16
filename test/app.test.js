@@ -59,5 +59,19 @@ describe('Projects Database', () => {
             });
     });
 
+    it('updates a project', () => {
+        project.budget = 4500;
+        return chai.request(app)
+            .put(`/projects/project${project._id}`)
+            .send(project)
+            .then(() => {
+                return chai.request(app)
+                    .get(`/projects/project${project._id}`)
+                    .then(({ body }) => {
+                        assert.deepEqual(body, project);
+                    });
+            });
+    });
+
     after(() => mongo.client.close());
 });
