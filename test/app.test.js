@@ -20,26 +20,71 @@ describe('Projects Database', () => {
 
     let project2 = {
         name: 'felted bunny',
-        materials: ['needles', 'wool', 'felting block'],
+        timeline: '1 week',
+        budget: 20
     };
 
-    it('saves a project to database with post', () => {
+    before(() => {
         return chai.request(app)
             .post('/projects')
             .send(project)
             .then(({ body }) => {
-                assert.deepEqual(body.name, project.name);
+                project = body;
             });
     });
 
-    it('gets projects when requested', () => {
+    it('saves a project to database with post, adds _id', () => {
+        assert.ok(project._id);
+    });
+    
+    it('gets a project by id', () => {
         return chai.request(app)
-            .get('/projects')
+            .get(`/projects/${project._id}`)
             .then(({ body }) => {
-                assert.deepEqual(body[0].name, project.name);
-                assert.deepEqual(body[0].budget, project.budget);
+                assert.deepEqual(body, project);
             });
     });
+    
+    it('gets all projects', () => {
+        return chai.request(app)
+            .post('/projects')
+            .send(project2)
+            .then(({ body }) => {
+                project2 = body;
+                return chai.request(app)
+                    .get('/projects')
+                    .then(({ body }) => {
+                        assert.deepEqual(body, [project, project2]);
+                    });
+            });
+    });
+    
+    it('updates a project', () => {
+        project.budget = 4500;
+        return chai.request(app)
+            .put(`/projects/${project._id}`)
+            .send(project)
+            .then(() => {
+                return chai.request(app)
+                    .get(`/projects/${project._id}`)
+                    .then(({ body }) => {
+                        assert.deepEqual(body, project);
+                    });
+            });
+    });
+    
+    it('deletes a project by id', () => {
+        return chai.request(app)
+            .delete(`/projects/${project._id}`)
+            .then(() => {
+                return chai.request(app)
+                    .get('/projects')
+                    .then(({ body }) => {
+                        assert.deepEqual(body, [project2]);
+                    });
+            });
+    });
+
 
     after(() => mongo.client.close());
 });
